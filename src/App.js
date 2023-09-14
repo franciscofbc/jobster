@@ -1,3 +1,5 @@
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Dashboard, Error, Landing, Register } from './pages';
 
@@ -14,7 +16,15 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />;
+      <ToastContainer
+        position="top-center"
+        style={{ textTransform: 'capitalize' }}
+      />
+    </>
+  );
 };
 
 export default App;
