@@ -1,7 +1,7 @@
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { Error, Landing, Register } from './pages';
+import { Error, Landing, ProtectedRoute, Register } from './pages';
 import {
   AddJob,
   AllJobs,
@@ -13,7 +13,11 @@ import {
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <SharedLayout />,
+    element: (
+      <ProtectedRoute>
+        <SharedLayout />
+      </ProtectedRoute>
+    ),
     errorElement: <Error />,
     children: [
       {

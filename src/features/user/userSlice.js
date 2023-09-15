@@ -3,6 +3,7 @@ import customFetch from '../../utils/customFetch';
 import {
   addUserToLocalStorage,
   getUserFromLocalStorage,
+  removeUserFromLocalStorage,
 } from '../../utils/localStorage';
 
 const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
@@ -36,12 +37,23 @@ export const loginUser = createAsyncThunk(
 const initialState = {
   isLoading: false,
   user: getUserFromLocalStorage(),
+  isSidebarOpen: false,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    toggleSidebar: (state) => {
+      state.isSidebarOpen = !state.isSidebarOpen;
+    },
+    logoutUser: (state) => {
+      state.user = null;
+      state.isSidebarOpen = false;
+      removeUserFromLocalStorage();
+      toast.success('logging out...');
+    },
+  },
   extraReducers: (builder) => {
     builder
       // register user
@@ -80,3 +92,4 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
+export const { toggleSidebar, logoutUser } = userSlice.actions;

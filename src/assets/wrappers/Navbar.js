@@ -67,7 +67,7 @@ const Wrapper = styled.nav`
     margin: 0;
   }
   @media (min-width: 992px) {
-    position: sticky;
+    position: sticky; //??
     top: 0;
 
     .nav-center {
