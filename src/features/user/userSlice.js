@@ -1,5 +1,9 @@
 import { toast } from 'react-toastify';
 import customFetch from '../../utils/customFetch';
+import {
+  addUserToLocalStorage,
+  getUserFromLocalStorage,
+} from '../../utils/localStorage';
 
 const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
 
@@ -31,7 +35,7 @@ export const loginUser = createAsyncThunk(
 
 const initialState = {
   isLoading: false,
-  user: null,
+  user: getUserFromLocalStorage(),
 };
 
 const userSlice = createSlice({
@@ -48,6 +52,7 @@ const userSlice = createSlice({
         const { user } = action.payload;
         state.isLoading = false;
         state.user = user;
+        addUserToLocalStorage(user);
         toast.success(`hello there ${user.name}`);
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -63,7 +68,8 @@ const userSlice = createSlice({
         const { user } = action.payload;
         state.isLoading = false;
         state.user = user;
-        toast.success(`welcome back ${user.name}`);
+        addUserToLocalStorage(user);
+        toast.success(`welcome ${user.name}`);
       })
       .addCase(loginUser.rejected, (state, action) => {
         const { msg } = action.payload;
