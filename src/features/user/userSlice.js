@@ -1,36 +1,35 @@
 import { toast } from 'react-toastify';
-import customFetch from '../../utils/customFetch';
 import {
   addUserToLocalStorage,
   getUserFromLocalStorage,
   removeUserFromLocalStorage,
 } from '../../utils/localStorage';
+import {
+  loginUserThunk,
+  registerUserThunk,
+  updateUserThunk,
+} from './userThunk';
 
 const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
 
 export const registerUser = createAsyncThunk(
   'user/registerUser',
   async (user, thunkAPI) => {
-    try {
-      const response = await customFetch.post('/auth/register', user);
-      return response.data;
-    } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
+    return registerUserThunk('/auth/register', user, thunkAPI);
   }
 );
 
 export const loginUser = createAsyncThunk(
   'user/loginUser',
   async (user, thunkAPI) => {
-    try {
-      const response = await customFetch.post('/auth/login', user);
-      return response.data;
-    } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
+    return loginUserThunk('/auth/login', user, thunkAPI);
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  'user/updateUser',
+  async (user, thunkAPI) => {
+    return updateUserThunk('/auth/updateUser', user, thunkAPI);
   }
 );
 
@@ -85,6 +84,23 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         const { msg } = action.payload;
+        state.isLoading = false;
+        toast.error(msg);
+      })
+      // update user
+      .addCase(updateUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        const { user } = action.payload;
+        state.isLoading = false;
+        state.user = user;
+        addUserToLocalStorage(user);
+        toast.success('user updated');
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        const { msg } = action.payload;
+        console.log(action);
         state.isLoading = false;
         toast.error(msg);
       });
