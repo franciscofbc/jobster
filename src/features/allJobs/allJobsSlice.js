@@ -58,6 +58,14 @@ const allJobsSlice = createSlice({
     hideLoading: (state) => {
       state.isLoading = false;
     },
+    clearFilters: (state) => {
+      return { ...state, ...initialFiltersState };
+    },
+    handleChange: (state, action) => {
+      const { name, value } = action.payload;
+      // return { ...state, [name]: value };
+      state[name] = value;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -94,4 +102,5 @@ const allJobsSlice = createSlice({
 });
 
 export default allJobsSlice.reducer;
-export const { showLoading, hideLoading } = allJobsSlice.actions;
+export const { showLoading, hideLoading, clearFilters, handleChange } =
+  allJobsSlice.actions;
