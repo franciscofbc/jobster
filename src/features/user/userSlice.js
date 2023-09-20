@@ -5,6 +5,7 @@ import {
   removeUserFromLocalStorage,
 } from '../../utils/localStorage';
 import {
+  clearStoreThunk,
   loginUserThunk,
   registerUserThunk,
   updateUserThunk,
@@ -14,24 +15,14 @@ const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
 
 export const registerUser = createAsyncThunk(
   'user/registerUser',
-  async (user, thunkAPI) => {
-    return registerUserThunk('/auth/register', user, thunkAPI);
-  }
+  registerUserThunk
 );
 
-export const loginUser = createAsyncThunk(
-  'user/loginUser',
-  async (user, thunkAPI) => {
-    return loginUserThunk('/auth/login', user, thunkAPI);
-  }
-);
+export const loginUser = createAsyncThunk('user/loginUser', loginUserThunk);
 
-export const updateUser = createAsyncThunk(
-  'user/updateUser',
-  async (user, thunkAPI) => {
-    return updateUserThunk('/auth/updateUser', user, thunkAPI);
-  }
-);
+export const updateUser = createAsyncThunk('user/updateUser', updateUserThunk);
+
+export const clearStore = createAsyncThunk('/user/clearStore', clearStoreThunk);
 
 const initialState = {
   isLoading: false,
@@ -102,9 +93,12 @@ const userSlice = createSlice({
       })
       .addCase(updateUser.rejected, (state, action) => {
         const { msg } = action.payload;
-        console.log(action);
         state.isLoading = false;
         toast.error(msg);
+      })
+      //clear store
+      .addCase(clearStore.rejected, (state, action) => {
+        toast.error('there was an error');
       });
   },
 });

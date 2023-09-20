@@ -3,6 +3,7 @@ import Wrapper from '../assets/wrappers/SearchContainer';
 import FormRow from './FormRow';
 import FormRowSelect from './FormRowSelect';
 import { clearFilters, handleChange } from '../features/allJobs/allJobsSlice';
+import { useMemo, useState } from 'react';
 
 const SearchContainer = () => {
   const { isLoading, search, searchStatus, searchType, sort, sortOptions } =
@@ -11,6 +12,7 @@ const SearchContainer = () => {
     (store) => store.jobState
   );
   const dispatch = useDispatch();
+  const [localSearch, setLocalSearch] = useState('');
 
   const handleSearch = (e) => {
     const name = e.target.name;
@@ -20,8 +22,26 @@ const SearchContainer = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLocalSearch('');
     dispatch(clearFilters());
   };
+
+  const debounce = () => {
+    console.log('debounce');
+    let timeoutId;
+    return (e) => {
+      setLocalSearch(e.target.value);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        console.log('timeout');
+        const name = e.target.name;
+        const value = e.target.value;
+        dispatch(handleChange({ name, value }));
+      }, 1000);
+    };
+  };
+
+  const memoDebounce = useMemo(() => debounce(), []);
 
   return (
     <Wrapper>
@@ -32,8 +52,8 @@ const SearchContainer = () => {
           <FormRow
             type="text"
             name="search"
-            value={search}
-            handleChange={handleSearch}
+            value={localSearch}
+            handleChange={memoDebounce}
           />
           {/* search by status */}
           <FormRowSelect
